@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<meta charset="utf-8"/>
+<html>
+<head>
+
+    <link rel="stylesheet" href="{{ static('css/tabs.css') }}"/>
+</head>
+<body>
+<div>
+    <h3>Chat!</h3>
+    <button id="connect" class="connect-btn">Connect</button>
+    <span id="name">UNKNOWN</span>
+    <span id="status">disconnected</span>
+</div>
+
+<div class="tab">
+    <!--    <button class="tab-links">London</button>-->
+</div>
+
+<div id="log" class="tab-content"></div>
+
+<div class="chat-form">
+    <form id="chat-form" action="#">
+        <label for="text">Message: </label><input id="text" type="text"/>
+        <button id="send" type="button" disabled>Send</button>
+    </form>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript" src="{{ static('js/sockets.js') }}"></script>
+
+</body>
+</html>
