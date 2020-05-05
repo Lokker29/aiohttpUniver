@@ -26,7 +26,8 @@ async def index(request):
     name = get_random_name()
     log.info(f'{name} joined.')
 
-    await ws_current.send_json({'action': 'connect', 'name': name})
+    await ws_current.send_json({'action': 'connect', 'name': name,
+                                'other_names': ','.join(request.app['websockets'].keys())})
 
     for ws in request.app['websockets'].values():
         await ws.send_json({'action': 'join', 'name': name})
@@ -38,9 +39,14 @@ async def index(request):
         msg = await ws_current.receive()
 
         if msg.type == aiohttp.WSMsgType.text:
+
+            text, other = msg.split("&")
+            from_name, to_name = other.split("@")
+
             for username, ws in request.app['websockets'].items():
-                await ws.send_json(
-                    {'action': 'sent', 'name': name, 'text': msg.data})
+                if username == to_name:
+                    await ws.send_json(
+                        {'action': 'sent', 'name': from_name, 'text': msg.data, 'to_name': to_name})
         else:
             break
 
