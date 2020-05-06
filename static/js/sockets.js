@@ -7,12 +7,13 @@ $(function () {
 
     function log(msg, name = null) {
         if (name) {
-            var control = $('#' + name);
+            var control = $("[id='" + name + "']");
+
             var date = new Date();
             var date_prompt = '(' + date.toISOString().split('T')[1].slice(0, 8) + ') ';
 
-            control.html(control.html() + date_prompt + msg + '<br/>');
-            control.scrollTop(control.scrollTop() + 1000);
+            control.append(`<span>${date_prompt + msg}</span>`);
+            control.append(`<br/>`);
         }
     }
 
@@ -20,9 +21,8 @@ $(function () {
         disconnect();
         var wsUri = (window.location.protocol == 'https:' && 'wss://' || 'ws://') + window.location.host;
         conn = new WebSocket(wsUri);
-        //log('Connecting...');
+
         conn.onopen = function () {
-            //log('Connected.');
             update_ui();
         };
         conn.onmessage = function (e) {
@@ -30,9 +30,9 @@ $(function () {
             switch (data.action) {
                 case  'connect':
                     name = data.name;
-                    // log('Connected as ' + name);v
-                    var names = data.other_names.split(',');
                     update_ui();
+
+                    var names = data.other_names.split(',');
                     if (names[0]) {
                         for (var b of names) {
                             add_block_in_tab(b);
@@ -41,12 +41,11 @@ $(function () {
                     break;
                 case  'disconnect':
                     name = data.name;
-                    // log('Disconnected ' + name);
+
                     remove_from_tab(name);
                     update_ui();
                     break;
                 case 'join':
-                    // log('Joined ' + data.name);
                     add_block_in_tab(data.name);
                     tabs.push(name);
                     break;
@@ -56,9 +55,9 @@ $(function () {
             }
         };
         conn.onclose = function () {
-            // log('Disconnected.');
             conn = null;
             update_ui();
+            $('.tab-links').remove();
         };
     }
 
@@ -69,7 +68,7 @@ $(function () {
 
         html = `<div id="${name}" class="tab-content" style="display: none"></div>`;
 
-        $('#connector').after(html);
+        $('.tab').after(html);
 
         $('.tab-links').on('click', click_tab);
     }
@@ -98,9 +97,9 @@ $(function () {
             $('#connect').html('Connect');
             $('#send').prop("disabled", true);
         } else {
-            $('#status').text('connected (' + conn.protocol + ')');
+            $('#status').text('connected');
             $('#connect').html('Disconnect');
-            $('#send').prop("disabled", false);
+            // $('#send').prop("disabled", false);
         }
         $('#name').text(name);
     }
@@ -116,8 +115,8 @@ $(function () {
     });
     $('#send').on('click', function () {
         var text = $('#text').val();
-        // log('Sending: ' + text);
-        log(text);
+
+        log(text, toName);
         conn.send(text + "&" + name + "@" + toName);
         $('#text').val('').focus();
         return false;
@@ -126,6 +125,10 @@ $(function () {
     $('.tab-links').click(click_tab);
 
     function click_tab(event) {
+
+        $('#connector').css('display', 'none');
+        $('#send').prop("disabled", false);
+
         var i, tabcontent, tablinks;
 
         toName = event.currentTarget.innerText;
@@ -145,6 +148,5 @@ $(function () {
         // Show the current tab, and add an "active" class to the link that opened the tab
         document.getElementById(toName).style.display = "block";
         event.currentTarget.className += " active";
-        var a = 2;
     }
 });

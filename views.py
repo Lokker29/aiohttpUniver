@@ -40,13 +40,13 @@ async def index(request):
 
         if msg.type == aiohttp.WSMsgType.text:
 
-            text, other = msg.split("&")
+            text, other = msg.data.split("&")
             from_name, to_name = other.split("@")
 
             for username, ws in request.app['websockets'].items():
                 if username == to_name:
                     await ws.send_json(
-                        {'action': 'sent', 'name': from_name, 'text': msg.data, 'to_name': to_name})
+                        {'action': 'sent', 'name': from_name, 'text': text, 'to_name': to_name})
         else:
             break
 
