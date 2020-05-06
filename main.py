@@ -39,7 +39,7 @@ async def shutdown(app):
 
 def main():
     app = init_app()
-    web.run_app(app)
+    web.run_app(app, port=29006)
 
 
 if __name__ == '__main__':

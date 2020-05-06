@@ -10,7 +10,9 @@ pip install -r requirements.txt
 ```
 
 ## Start
-`make` or `make run`
+```
+python main.py
+```
 
 ## Host and Port
-Your chat application is available on host 0.0.0.0 (or your net ip) and port 8080
+Your chat application is available on `http://<your_ip>:29006/`. Open it in browser
