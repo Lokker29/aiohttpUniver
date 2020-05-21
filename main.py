@@ -4,6 +4,7 @@ import jinja2
 
 import aiohttp_jinja2
 from aiohttp import web
+
 from views import index
 
 BASE_DIR = os.path.abspath(__file__)
@@ -22,7 +23,8 @@ async def init_app():
 
     setup_static_routes(app)
 
-    app.router.add_get('/', index)
+    app.router.add_get('/', index, name='chat')
+
     return app
 
 
