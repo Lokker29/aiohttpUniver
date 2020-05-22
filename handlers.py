@@ -17,7 +17,7 @@ async def connect(data, request, ws_current):
 
     del request.app['websockets'][ws_current]
 
-    await ws_current.send_json({'type': 'open', 'all_clients': list(request.app['websockets'].values())})
+    await ws_current.send_json({'type': 'open', 'all_clients': ';'.join(list(request.app['websockets'].keys()))})
 
     request.app['websockets'][data['name']] = ws_current
 
@@ -26,13 +26,17 @@ async def send_message(data, request, message_history):
     append_message(message_history, create_message(data['text'], data['author'], data['recipient']))
 
     for username, ws in request.app['websockets'].items():
-        if data['recipient'] == '__all__':
-            if username != data['author']:
-                await ws.send_json({'type': 'send_message', 'text': data['text'],
-                                    'author': data['author'], '__all__': True})
-        elif username == data['recipient']:
-            await ws.send_json({'type': 'send_message', 'text': data['text'],
-                                'author': data['author'], '__all__': True})
+        send = {}
+        if data['recipient'] == 'All':
+            send = {'type': 'send_message', 'text': data['text'], 'all_recipients': True,
+                    'author': data['author']}
+
+        elif username == data['recipient'] or username == data['author']:
+            send = {'type': 'send_message', 'text': data['text'], 'recipient': data['recipient'],
+                    'author': data['author'], 'all_recipients': False}
+
+        if send:
+            await ws.send_json(data)
 
 
 async def disconnect(request, ws_current):
