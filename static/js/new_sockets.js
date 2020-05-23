@@ -80,35 +80,40 @@ $(document).ready(function () {
                         for (var user of all_users) {
                             var elem = get_elem_by_name(user);
                             $('#contacts').append(elem);
-                            $('#' + user + ' .tab-user-name').click(tab_user_click);
+                            // $('#' + user + ' .tab-user-name').click(tab_user_click);
+                            $("[id='" + user + "'] .tab-user-name").click(tab_user_click);
 
                             elem = get_chat_box(user);
                             $('#chat-box-container').append(elem);
 
-                            $('#' + user + '-btn_id').click(on_click);
+                            // $('#' + user + '-btn_id').click(on_click);
+                            $("[id='" + user + "-btn_id']").click(on_click);
                         }
                     }
                     break;
                 case 'connect':
                     var elem = get_elem_by_name(data.name);
                     $('#contacts').append(elem);
-                    $('#' + data.name + ' .tab-user-name').click(tab_user_click);
+                    // $('#' + data.name + ' .tab-user-name').click(tab_user_click);
+                    $("[id='" + data.name + "'] .tab-user-name").click(tab_user_click);
 
                     elem = get_chat_box(data.name);
                     $('#chat-box-container').append(elem);
 
-                    $('#' + data.name + '-btn_id').click(on_click);
+                    // $('#' + data.name + '-btn_id').click(on_click);
+                    $("[id='" + data.name + "-btn_id']").click(on_click);
                     break;
                 case 'disconnect':
-                    var elem = $('#' + data.name);
+                    // var elem = $('#' + data.name);
+                    var elem = $("[id='" + data.name + "']");
                     if (elem.hasClass('active')) {
                         $('#All').addClass('active');
                         $('#All-chat').removeClass('hidden');
                     }
 
                     elem.remove();
-                    $('#' + data.name + '-chat').remove();
-
+                    // $('#' + data.name + '-chat').remove();
+                    $("[id='" + data.name + "-chat']").remove();
                     break;
                 case 'send_message':
                     var elem = create_msg(name, data.text, data.author);
@@ -116,9 +121,11 @@ $(document).ready(function () {
                     if (data.all_recipients === true) {
                         $('#All-chat .msg_card_body').append(elem);
                     } else if (data.author === name) {
-                        $('#' + data.recipient + '-chat .msg_card_body').append(elem);
+                        // $('#' + data.recipient + '-chat .msg_card_body').append(elem);
+                        $("[id='" + data.recipient + "-chat'] .msg_card_body").append(elem);
                     } else if (data.recipient === name) {
-                        $('#' + data.author + '-chat .msg_card_body').append(elem);
+                        // $('#' + data.author + '-chat .msg_card_body').append(elem);
+                        $("[id='" + data.author + "-chat'] .msg_card_body").append(elem);
                     }
                     break;
             }
@@ -146,6 +153,7 @@ $(document).ready(function () {
             $('#login-block').addClass('hidden');
             $('#chat-block').removeClass('hidden');
             connect();
+            $('#login-username').val('');
         }
     });
 
@@ -156,13 +164,14 @@ $(document).ready(function () {
         toName = $(this).parents('li').attr('id');
 
         $('.chat-box').addClass('hidden');
-        $(`#${toName}-chat`).removeClass('hidden');
+        // $(`#${toName}-chat`).removeClass('hidden');
+        $("[id='" + toName + "-chat']").removeClass('hidden')
     }
 
     $('.tab-user-name').click(tab_user_click);
 
     function on_click() {
-        var text = $('#' + toName + '-textarea_msg').val();
+        var text = $("[id='" + toName + "-textarea_msg']").val();
 
         if (text !== null && text !== '') {
             var send_data = {
@@ -172,9 +181,37 @@ $(document).ready(function () {
                 recipient: toName,
             };
             conn.send(JSON.stringify(send_data));
-            $('#' + toName + '-textarea_msg').val('');
+            $("[id='" + toName + "-textarea_msg']").val('');
         }
     }
 
     $('.send_btn').click(on_click);
+
+    $('#exit-btn').click(function () {
+        var elements = $('.chat-box');
+
+        for (var elem of elements) {
+            if ($(elem).attr('id') !== 'All-chat') {
+                $(elem).remove()
+            }
+        }
+
+        elements = $('.user-contact');
+        for (var elem of elements) {
+            if ($(elem).attr('id') !== 'All') {
+                $(elem).remove()
+            }
+        }
+
+        $('#All').addClass('active');
+
+        $('#All-chat .msg_card_body div').remove();
+        $('#All-chat').removeClass('hidden');
+
+        $('#chat-block').addClass('hidden');
+        $('#login-block').removeClass('hidden');
+
+        disconnect();
+    });
+
 });

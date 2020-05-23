@@ -152,3 +152,34 @@ body, html {
 .hidden {
     display: none;
 }
+
+.exit_div {
+    height: 40%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-right: 14%;
+}
+
+.exit_btn {
+    color: black;
+    background-color: #FFC312;
+    width: 100px;
+    height: 40px;
+}
+
+.exit_btn:hover {
+    color: black;
+    background-color: white;
+}
+
+.exit_btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.chat-content {
+    height: 60%;
+    padding-top: 10%;
+    margin-bottom: 10%;
+}

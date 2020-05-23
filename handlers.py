@@ -36,7 +36,7 @@ async def send_message(data, request, message_history):
                     'author': data['author'], 'all_recipients': False}
 
         if send:
-            await ws.send_json(data)
+            await ws.send_json(send)
 
 
 async def disconnect(request, ws_current):
